@@ -139,18 +139,20 @@ export default function BookingPage() {
   useEffect(() => {
     if (!selectedDate) return;
     async function loadBooked() {
+      const dateEntry = availableDates.find((d) => d.date === selectedDate);
+      if (!dateEntry) return;
       const { data } = await supabase
         .from("bookings")
         .select("full_name")
         .eq("department_id", link!.department_id)
-        .eq("available_date_id", selectedDate!)
+        .eq("available_date_id", dateEntry.id)
         .eq("status", "confirmed");
       if (data) {
         setBookedSlots(data.map((b) => b.full_name));
       }
     }
     loadBooked();
-  }, [selectedDate, link]);
+  }, [selectedDate, link, availableDates]);
 
   const dateStr = (day: number) =>
     `${currentYear}-${String(currentMonth + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
@@ -198,11 +200,14 @@ export default function BookingPage() {
     e.preventDefault();
     if (!selectedDate || !selectedTime || !link || !user) return;
 
+    const dateEntry = availableDates.find((d) => d.date === selectedDate);
+    if (!dateEntry) return;
+
     setSubmitting(true);
     const { error } = await createBooking({
       user_id: user.id,
       department_id: link.department_id,
-      available_date_id: selectedDate,
+      available_date_id: dateEntry.id,
       time_slot_id: selectedTime,
       full_name: user.fullName,
       email: user.email,

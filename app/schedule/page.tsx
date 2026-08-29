@@ -14,7 +14,7 @@ interface BookingEntry {
   notes: string | null;
   created_at: string;
   available_dates: { date: string } | null;
-  time_slots: { time: string } | null;
+  time_slot_id: string;
   departments: { name: string; color: string } | null;
 }
 
@@ -162,7 +162,7 @@ export default function SchedulePage() {
                         </p>
                       </div>
                       <p className="text-xs text-cncp-blue/40">
-                        {b.available_dates?.date} &middot; {b.time_slots?.time}
+                        {b.available_dates?.date} &middot; {b.time_slot_id}
                       </p>
                     </div>
                   </div>
@@ -201,7 +201,7 @@ export default function SchedulePage() {
                       {b.departments?.name ?? "Department"}
                     </p>
                     <p className="text-xs text-cncp-blue/40">
-                      {b.available_dates?.date} &middot; {b.time_slots?.time}
+                      {b.available_dates?.date} &middot; {b.time_slot_id}
                     </p>
                   </div>
                   <span

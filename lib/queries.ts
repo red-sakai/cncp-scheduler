@@ -371,7 +371,7 @@ export async function getUserBookings(userId: string) {
   const { data, error } = await supabase
     .from("bookings")
     .select(
-      "*, available_dates(date), time_slots(time), departments(name, color)"
+      "*, available_dates(date), departments(name, color)"
     )
     .eq("user_id", userId)
     .order("created_at", { ascending: false });
@@ -382,7 +382,7 @@ export async function getBookingsByEmail(email: string) {
   const { data, error } = await supabase
     .from("bookings")
     .select(
-      "*, available_dates(date), time_slots(time), departments(name, color)"
+      "*, available_dates(date), departments(name, color)"
     )
     .eq("email", email)
     .order("created_at", { ascending: false });
@@ -393,7 +393,7 @@ export async function getAllBookings() {
   const { data, error } = await supabase
     .from("bookings")
     .select(
-      "*, available_dates(date), time_slots(time), departments(name)"
+      "*, available_dates(date), departments(name)"
     )
     .order("created_at", { ascending: false });
   return { data, error };
@@ -403,7 +403,7 @@ export async function getBookingsByDepartment(departmentId: string) {
   const { data, error } = await supabase
     .from("bookings")
     .select(
-      "*, available_dates(date), time_slots(time)"
+      "*, available_dates(date)"
     )
     .eq("department_id", departmentId)
     .order("created_at", { ascending: false });
@@ -424,7 +424,7 @@ export async function getBookingById(bookingId: string) {
   const { data, error } = await supabase
     .from("bookings")
     .select(
-      "*, available_dates(date), time_slots(time), departments(name)"
+      "*, available_dates(date), departments(name)"
     )
     .eq("id", bookingId)
     .single();

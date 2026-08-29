@@ -2,12 +2,14 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { signUp } from "@/lib/queries";
 
-export default function SignUpPage() {
+function SignUpForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectTo = searchParams.get("redirect");
   const [form, setForm] = useState({
     fullName: "",
     email: "",
@@ -71,7 +73,7 @@ export default function SignUpPage() {
       return;
     }
 
-    router.push("/schedule");
+    router.push(redirectTo ?? "/schedule");
   };
 
   return (
@@ -306,7 +308,7 @@ export default function SignUpPage() {
           <p className="mt-6 text-center text-sm text-gray-400 anim-fade-in delay-5">
             Already have an account?{" "}
             <Link
-              href="/signin"
+              href={redirectTo ? `/signin?redirect=${encodeURIComponent(redirectTo)}` : "/signin"}
               className="font-semibold text-cncp-blue hover:text-cncp-blue-light transition-colors"
             >
               Sign in
@@ -346,5 +348,13 @@ export default function SignUpPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function SignUpPage() {
+  return (
+    <Suspense>
+      <SignUpForm />
+    </Suspense>
   );
 }

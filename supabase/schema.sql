@@ -144,16 +144,40 @@ create table if not exists public.bookings (
 alter table public.bookings add column if not exists user_id uuid references public.profiles(id) on delete set null;
 alter table public.bookings add column if not exists department_id uuid not null references public.departments(id) on delete cascade;
 alter table public.bookings add column if not exists available_date_id uuid not null references public.available_dates(id) on delete cascade;
-alter table public.bookings add column if not exists time_slot_id uuid not null references public.time_slots(id) on delete cascade;
+alter table public.bookings add column if not exists time_slot_id uuid not null;
+
+-- Migrate time_slot_id from uuid to text for time strings like "9:00 AM"
+do $$
+begin
+  if exists (
+    select 1 from information_schema.columns
+    where table_name = 'bookings' and column_name = 'time_slot_id' and data_type = 'uuid'
+  ) then
+    alter table public.bookings drop constraint if exists bookings_unique_slot_per_date;
+    alter table public.bookings drop constraint if exists bookings_time_slot_id_fkey;
+    alter table public.bookings alter column time_slot_id drop not null;
+    alter table public.bookings alter column time_slot_id type text using time_slot_id::text;
+    alter table public.bookings alter column time_slot_id set not null;
+  end if;
+end $$;
 
 create index if not exists idx_bookings_user on public.bookings(user_id);
 create index if not exists idx_bookings_date on public.bookings(available_date_id);
 create index if not exists idx_bookings_status on public.bookings(status);
 
--- Unique constraint: one booking per time slot
-create unique index if not exists idx_bookings_unique_slot
-  on public.bookings(time_slot_id)
-  where status = 'confirmed';
+-- Drop old unique index if it exists
+drop index if exists public.idx_bookings_unique_slot;
+
+-- Unique constraint: one booking per time slot per date
+do $$
+begin
+  if not exists (
+    select 1 from pg_constraint where conname = 'bookings_unique_slot_per_date'
+  ) then
+    alter table public.bookings
+      add constraint bookings_unique_slot_per_date unique (available_date_id, time_slot_id);
+  end if;
+end $$;
 
 -- ────────────────────────────────────────────
 -- 7. ROW LEVEL SECURITY (RLS)
@@ -343,44 +367,4 @@ create policy "Bookings: users update own"
 -- 8. HELPER FUNCTIONS & TRIGGERS
 -- ────────────────────────────────────────────
 
--- Function to mark a time slot as taken when booking is created
-create or replace function public.book_slot()
-returns trigger
-language plpgsql
-security definer
-as $$
-begin
-  update public.time_slots
-  set is_taken = true
-  where id = new.time_slot_id;
-  return new;
-end;
-$$;
-
-drop trigger if exists on_booking_created on public.bookings;
-create trigger on_booking_created
-  after insert on public.bookings
-  for each row
-  execute function public.book_slot();
-
--- Function to release a time slot when booking is cancelled
-create or replace function public.cancel_booking_slot()
-returns trigger
-language plpgsql
-security definer
-as $$
-begin
-  if new.status = 'cancelled' and old.status != 'cancelled' then
-    update public.time_slots
-    set is_taken = false
-    where id = new.time_slot_id;
-  end if;
-  return new;
-end;
-$$;
-
-drop trigger if exists on_booking_updated on public.bookings;
-create trigger on_booking_updated
-  after update on public.bookings
-  for each row
-  execute function public.cancel_booking_slot();
+-- No triggers needed: time_slot_id is now text, uniqueness enforced by constraint

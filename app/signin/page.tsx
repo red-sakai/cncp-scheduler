@@ -2,12 +2,14 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { signIn, getProfile } from "@/lib/queries";
 
-export default function SignInPage() {
+function SignInForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectTo = searchParams.get("redirect");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPw, setShowPw] = useState(false);
@@ -35,13 +37,15 @@ export default function SignInPage() {
 
     try {
       const { data: profile } = await getProfile(authData.user.id);
-      if (profile?.role === "admin") {
+      if (redirectTo) {
+        router.push(redirectTo);
+      } else if (profile?.role === "admin") {
         router.push("/admin/dashboard");
       } else {
         router.push("/schedule");
       }
     } catch {
-      router.push("/schedule");
+      router.push(redirectTo ?? "/schedule");
     }
   };
 
@@ -169,9 +173,9 @@ export default function SignInPage() {
                   required
                   value={password}
                   onChange={(e) => {
-                  setPassword(e.target.value);
-                  setError("");
-                }}
+                    setPassword(e.target.value);
+                    setError("");
+                  }}
                   onFocus={() => setFocusedField("password")}
                   onBlur={() => setFocusedField(null)}
                   placeholder="Enter password"
@@ -239,7 +243,7 @@ export default function SignInPage() {
           <p className="mt-7 text-center text-sm text-gray-400 anim-fade-in delay-5">
             Don&apos;t have an account?{" "}
             <Link
-              href="/signup"
+              href={redirectTo ? `/signup?redirect=${encodeURIComponent(redirectTo)}` : "/signup"}
               className="font-semibold text-cncp-blue hover:text-cncp-blue-light transition-colors"
             >
               Create one
@@ -248,5 +252,13 @@ export default function SignInPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function SignInPage() {
+  return (
+    <Suspense>
+      <SignInForm />
+    </Suspense>
   );
 }
