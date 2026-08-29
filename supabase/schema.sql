@@ -144,40 +144,33 @@ create table if not exists public.bookings (
 alter table public.bookings add column if not exists user_id uuid references public.profiles(id) on delete set null;
 alter table public.bookings add column if not exists department_id uuid not null references public.departments(id) on delete cascade;
 alter table public.bookings add column if not exists available_date_id uuid not null references public.available_dates(id) on delete cascade;
-alter table public.bookings add column if not exists time_slot_id uuid not null;
+alter table public.bookings add column if not exists booking_time text not null default '';
 
--- Migrate time_slot_id from uuid to text for time strings like "9:00 AM"
+-- Migrate from old time_slot_id column if it exists
 do $$
 begin
   if exists (
     select 1 from information_schema.columns
-    where table_name = 'bookings' and column_name = 'time_slot_id' and data_type = 'uuid'
+    where table_name = 'bookings' and column_name = 'time_slot_id'
   ) then
     alter table public.bookings drop constraint if exists bookings_unique_slot_per_date;
     alter table public.bookings drop constraint if exists bookings_time_slot_id_fkey;
-    alter table public.bookings alter column time_slot_id drop not null;
-    alter table public.bookings alter column time_slot_id type text using time_slot_id::text;
-    alter table public.bookings alter column time_slot_id set not null;
+    -- Copy data if both columns exist
+    if exists (
+      select 1 from information_schema.columns
+      where table_name = 'bookings' and column_name = 'booking_time'
+    ) then
+      update public.bookings set booking_time = time_slot_id::text where booking_time = '';
+    end if;
+    alter table public.bookings drop column time_slot_id;
+    alter table public.bookings
+      add constraint bookings_unique_slot_per_date unique (available_date_id, booking_time);
   end if;
 end $$;
 
 create index if not exists idx_bookings_user on public.bookings(user_id);
 create index if not exists idx_bookings_date on public.bookings(available_date_id);
 create index if not exists idx_bookings_status on public.bookings(status);
-
--- Drop old unique index if it exists
-drop index if exists public.idx_bookings_unique_slot;
-
--- Unique constraint: one booking per time slot per date
-do $$
-begin
-  if not exists (
-    select 1 from pg_constraint where conname = 'bookings_unique_slot_per_date'
-  ) then
-    alter table public.bookings
-      add constraint bookings_unique_slot_per_date unique (available_date_id, time_slot_id);
-  end if;
-end $$;
 
 -- ────────────────────────────────────────────
 -- 7. ROW LEVEL SECURITY (RLS)
@@ -348,6 +341,13 @@ create policy "Bookings: users read own by email"
     )
   );
 
+drop policy if exists "Bookings: admin read all" on public.bookings;
+create policy "Bookings: admin read all"
+  on public.bookings for select
+  using (
+    exists (select 1 from public.profiles where id = auth.uid() and role = 'admin')
+  );
+
 drop policy if exists "Bookings: users insert own" on public.bookings;
 create policy "Bookings: users insert own"
   on public.bookings for insert
@@ -362,6 +362,13 @@ drop policy if exists "Bookings: users update own" on public.bookings;
 create policy "Bookings: users update own"
   on public.bookings for update
   using (auth.uid() = user_id);
+
+drop policy if exists "Bookings: admin update all" on public.bookings;
+create policy "Bookings: admin update all"
+  on public.bookings for update
+  using (
+    exists (select 1 from public.profiles where id = auth.uid() and role = 'admin')
+  );
 
 -- ────────────────────────────────────────────
 -- 8. HELPER FUNCTIONS & TRIGGERS

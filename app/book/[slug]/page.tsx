@@ -143,12 +143,12 @@ export default function BookingPage() {
       if (!dateEntry) return;
       const { data } = await supabase
         .from("bookings")
-        .select("full_name")
+        .select("booking_time")
         .eq("department_id", link!.department_id)
         .eq("available_date_id", dateEntry.id)
         .eq("status", "confirmed");
       if (data) {
-        setBookedSlots(data.map((b) => b.full_name));
+        setBookedSlots(data.map((b) => b.booking_time));
       }
     }
     loadBooked();
@@ -208,7 +208,7 @@ export default function BookingPage() {
       user_id: user.id,
       department_id: link.department_id,
       available_date_id: dateEntry.id,
-      time_slot_id: selectedTime,
+      booking_time: selectedTime,
       full_name: user.fullName,
       email: user.email,
       notes: notes.trim() || null,
@@ -221,7 +221,7 @@ export default function BookingPage() {
     }
 
     try {
-      await fetch("/api/send-confirmation", {
+      fetch("/api/send-confirmation", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -423,13 +423,22 @@ export default function BookingPage() {
                   <div className="flex flex-wrap gap-1.5">
                     {availableTimeSlots.map((slot) => {
                       const sel = selectedTime === slot;
+                      const isBooked = bookedSlots.includes(slot);
                       return (
                         <button
                           key={slot}
-                          onClick={() => setSelectedTime(slot)}
-                          className={`slot-pill ${sel ? "slot-selected" : ""}`}
+                          onClick={() => !isBooked && setSelectedTime(slot)}
+                          disabled={isBooked}
+                          className={`slot-pill ${sel ? "slot-selected" : ""} ${
+                            isBooked ? "slot-taken" : ""
+                          }`}
                         >
                           {slot}
+                          {isBooked && (
+                            <span className="ml-1 text-[10px] text-red-400 font-medium">
+                              Booked
+                            </span>
+                          )}
                         </button>
                       );
                     })}

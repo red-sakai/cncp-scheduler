@@ -59,7 +59,7 @@ export interface Booking {
   user_id: string | null;
   department_id: string;
   available_date_id: string;
-  time_slot_id: string;
+  booking_time: string;
   full_name: string;
   email: string;
   status: "confirmed" | "cancelled" | "completed";
@@ -357,7 +357,7 @@ export async function createBooking(
       user_id: booking.user_id,
       department_id: booking.department_id,
       available_date_id: booking.available_date_id,
-      time_slot_id: booking.time_slot_id,
+      booking_time: booking.booking_time,
       full_name: booking.full_name,
       email: booking.email,
       notes: booking.notes,
@@ -414,6 +414,16 @@ export async function cancelBooking(bookingId: string) {
   const { data, error } = await supabase
     .from("bookings")
     .update({ status: "cancelled", updated_at: new Date().toISOString() })
+    .eq("id", bookingId)
+    .select()
+    .single();
+  return { data: data as Booking | null, error };
+}
+
+export async function updateBookingTime(bookingId: string, newTime: string) {
+  const { data, error } = await supabase
+    .from("bookings")
+    .update({ booking_time: newTime, updated_at: new Date().toISOString() })
     .eq("id", bookingId)
     .select()
     .single();
