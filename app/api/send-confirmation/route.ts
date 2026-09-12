@@ -1,18 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import nodemailer from "nodemailer";
 
-function getTransporter() {
-  return nodemailer.createTransport({
-    host: process.env.SMTP_HOST,
-    port: Number(process.env.SMTP_PORT) || 587,
-    secure: process.env.SMTP_SECURE === "true",
-    auth: {
-      user: process.env.SMTP_USER,
-      pass: process.env.SMTP_PASS,
-    },
-  });
-}
-
 interface BookingEmailData {
   name: string;
   email: string;
@@ -33,6 +21,26 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const smtpHost = process.env.SMTP_HOST;
+    const smtpPort = process.env.SMTP_PORT;
+    const smtpUser = process.env.SMTP_USER;
+    const smtpPass = process.env.SMTP_PASS;
+
+    if (!smtpHost || !smtpUser || !smtpPass) {
+      return NextResponse.json(
+        {
+          error: "SMTP not configured",
+          missing: {
+            SMTP_HOST: !smtpHost,
+            SMTP_PORT: !smtpPort,
+            SMTP_USER: !smtpUser,
+            SMTP_PASS: !smtpPass,
+          },
+        },
+        { status: 500 }
+      );
+    }
+
     const origin = request.nextUrl.origin;
     const res = await fetch(`${origin}/cisco_new_template.html`);
     if (!res.ok) {
@@ -45,10 +53,19 @@ export async function POST(request: NextRequest) {
     html = html.replace(/\{\{\s*date\s*\}\}/g, date);
     html = html.replace(/\{\{\s*time\s*\}\}/g, time);
 
-    const transporter = getTransporter();
+    const transporter = nodemailer.createTransport({
+      host: smtpHost,
+      port: Number(smtpPort) || 587,
+      secure: process.env.SMTP_SECURE === "true",
+      auth: {
+        user: smtpUser,
+        pass: smtpPass,
+      },
+    });
 
+    await transporter.verify();
     await transporter.sendMail({
-      from: process.env.SMTP_FROM ?? `"Cisco NetConnect" <${process.env.SMTP_USER}>`,
+      from: process.env.SMTP_FROM ?? `"Cisco NetConnect" <${smtpUser}>`,
       to: email,
       subject: `Interview Confirmed - ${department} | Cisco NetConnect PUP`,
       html,
