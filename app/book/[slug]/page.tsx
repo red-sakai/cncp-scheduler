@@ -264,7 +264,7 @@ export default function BookingPage() {
     }
 
     try {
-      await fetch("/api/send-confirmation", {
+      const res = await fetch("/api/send-confirmation", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -275,8 +275,12 @@ export default function BookingPage() {
           time: selectedTime,
         }),
       });
-    } catch {
-      // Email failure shouldn't block the booking
+      if (!res.ok) {
+        const body = await res.json().catch(() => null);
+        console.error("Email API failed:", res.status, body);
+      }
+    } catch (err) {
+      console.error("Email fetch error:", err);
     }
 
     setSubmitting(false);
