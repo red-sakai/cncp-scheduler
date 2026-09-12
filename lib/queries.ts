@@ -420,6 +420,21 @@ export async function cancelBooking(bookingId: string) {
   return { data: data as Booking | null, error };
 }
 
+export async function hasActiveBookingInDepartment(
+  userId: string,
+  departmentId: string
+): Promise<boolean> {
+  const { data, error } = await supabase
+    .from("bookings")
+    .select("id")
+    .eq("user_id", userId)
+    .eq("department_id", departmentId)
+    .eq("status", "confirmed")
+    .limit(1);
+  if (error) return false;
+  return (data?.length ?? 0) > 0;
+}
+
 export async function updateBookingTime(bookingId: string, newTime: string) {
   const { data, error } = await supabase
     .from("bookings")

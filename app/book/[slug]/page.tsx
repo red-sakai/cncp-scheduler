@@ -10,6 +10,7 @@ import {
   createBooking,
   getCurrentUser,
   getProfile,
+  hasActiveBookingInDepartment,
 } from "@/lib/queries";
 import type { TimeRange } from "@/lib/queries";
 import { supabase } from "@/lib/supabase";
@@ -75,6 +76,11 @@ export default function BookingPage() {
   const [notes, setNotes] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [existingBooking, setExistingBooking] = useState<{
+    date: string;
+    time: string;
+    department: string;
+  } | null>(null);
 
   const linkDateFrom = link ? new Date(link.date_from + "T00:00:00") : null;
   const linkDateTo = link ? new Date(link.date_to + "T00:00:00") : null;
@@ -112,6 +118,33 @@ export default function BookingPage() {
         return;
       }
       setLink(data as LinkData);
+
+      if (profile) {
+        const hasActive = await hasActiveBookingInDepartment(
+          authUser.id,
+          (data as LinkData).department_id
+        );
+        if (hasActive) {
+          const { data: bookings } = await supabase
+            .from("bookings")
+            .select("booking_time, available_dates(date), departments(name)")
+            .eq("user_id", authUser.id)
+            .eq("department_id", (data as LinkData).department_id)
+            .eq("status", "confirmed")
+            .limit(1)
+            .single();
+          if (bookings) {
+            const ad = bookings.available_dates as unknown as { date: string } | null;
+            const dept = bookings.departments as unknown as { name: string } | null;
+            setExistingBooking({
+              date: ad?.date ?? "N/A",
+              time: bookings.booking_time,
+              department: dept?.name ?? "N/A",
+            });
+          }
+        }
+      }
+
       setLoading(false);
     }
     load();
@@ -200,6 +233,16 @@ export default function BookingPage() {
     e.preventDefault();
     if (!selectedDate || !selectedTime || !link || !user) return;
 
+    const hasActive = await hasActiveBookingInDepartment(
+      user.id,
+      link.department_id
+    );
+    if (hasActive) {
+      setError("You already have a confirmed booking in this department. Please cancel it first before booking another.");
+      setSubmitting(false);
+      return;
+    }
+
     const dateEntry = availableDates.find((d) => d.date === selectedDate);
     if (!dateEntry) return;
 
@@ -221,7 +264,7 @@ export default function BookingPage() {
     }
 
     try {
-      fetch("/api/send-confirmation", {
+      await fetch("/api/send-confirmation", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -311,6 +354,54 @@ export default function BookingPage() {
           >
             Done
           </Link>
+        </div>
+      </div>
+    );
+  }
+
+  if (existingBooking) {
+    return (
+      <div className="min-h-screen bg-[#ede5f7]">
+        <div className="bg-cncp-blue-dark">
+          <div className="max-w-4xl mx-auto px-5 py-5 flex items-center gap-3">
+            <Image
+              src="/cncp-partnership-logo.png"
+              alt="CNCP Logo"
+              width={36}
+              height={36}
+              className="w-9 h-9 rounded-lg object-cover"
+            />
+            <div>
+              <h1 className="text-white text-sm font-bold">{link.title}</h1>
+              <p className="text-white/40 text-xs">{link.departments?.name}</p>
+            </div>
+          </div>
+        </div>
+        <div className="max-w-4xl mx-auto px-5 py-8 flex items-center justify-center">
+          <div className="bg-white rounded-2xl shadow-[0_2px_12px_rgba(0,0,0,0.04)] p-10 text-center max-w-sm w-full anim-scale-in">
+            <div className="w-14 h-14 rounded-full bg-amber-50 flex items-center justify-center mx-auto mb-4">
+              <svg className="w-7 h-7 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
+              </svg>
+            </div>
+            <h2 className="text-lg font-bold text-cncp-blue-dark mb-2">
+              Already Booked
+            </h2>
+            <p className="text-sm text-cncp-blue/50 mb-5">
+              You already have a confirmed booking in this department. You cannot book another slot until you cancel your existing one.
+            </p>
+            <div className="bg-[#f3eefa] rounded-xl p-4 mb-6 text-left">
+              <p className="text-xs font-bold text-cncp-blue/40 uppercase tracking-wider mb-2">Your Booking</p>
+              <p className="text-sm font-semibold text-cncp-blue-dark">{existingBooking.department}</p>
+              <p className="text-sm text-cncp-blue/60">{existingBooking.date} &middot; {existingBooking.time}</p>
+            </div>
+            <Link
+              href="/schedule"
+              className="cncp-btn-primary !w-auto !px-6 inline-block !text-sm"
+            >
+              View My Bookings
+            </Link>
+          </div>
         </div>
       </div>
     );

@@ -38,7 +38,7 @@ export async function POST(request: NextRequest) {
     const templatePath = path.join(
       process.cwd(),
       "public",
-      "cisco_interview.html"
+      "cisco_new_template.html"
     );
     let html = fs.readFileSync(templatePath, "utf-8");
 
