@@ -353,7 +353,7 @@ export default function BookingPage() {
             {selectedDate} at {selectedTime}
           </p>
           <p className="text-xs text-cncp-blue/30 mb-6">
-            A confirmation has been sent to {user?.email}.
+            A confirmation has been recorded in your account.
           </p>
           <Link
             href="/"
