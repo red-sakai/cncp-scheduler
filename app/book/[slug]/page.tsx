@@ -258,7 +258,10 @@ export default function BookingPage() {
     });
 
     if (error) {
-      alert("Booking failed: " + error.message);
+      const msg = error.message?.includes("23505") || error.message?.includes("duplicate")
+        ? "This time slot was just taken by someone else. Please pick another time."
+        : "Booking failed: " + error.message;
+      setError(msg);
       setSubmitting(false);
       return;
     }

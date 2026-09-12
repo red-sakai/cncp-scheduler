@@ -44,12 +44,15 @@ export default function SchedulePage() {
   }, [router]);
 
   const handleCancel = async (id: string) => {
-    if (!confirm("Are you sure you want to cancel this booking?")) return;
+    if (!confirm("Are you sure you want to cancel this booking? This will free up the slot for others.")) return;
     setCancelling(id);
-    await cancelBooking(id);
-    setBookings((prev) =>
-      prev.map((b) => (b.id === id ? { ...b, status: "cancelled" } : b))
-    );
+    const { error } = await cancelBooking(id);
+    if (error) {
+      alert("Failed to cancel booking.");
+      setCancelling(null);
+      return;
+    }
+    setBookings((prev) => prev.filter((b) => b.id !== id));
     setCancelling(null);
   };
 
@@ -57,7 +60,7 @@ export default function SchedulePage() {
     (b) => b.status === "confirmed" && b.available_dates?.date
   );
   const past = bookings.filter(
-    (b) => b.status !== "confirmed" || !b.available_dates?.date
+    (b) => b.status === "completed" || !b.available_dates?.date
   );
 
   if (loading) {
@@ -184,11 +187,11 @@ export default function SchedulePage() {
           )}
         </div>
 
-        {/* Past / Cancelled */}
+        {/* Past */}
         {past.length > 0 && (
           <div className="anim-fade-in-up delay-2">
             <h2 className="text-xs font-bold text-cncp-blue/40 uppercase tracking-wider mb-3">
-              Past & Cancelled
+              Past
             </h2>
             <div className="space-y-2">
               {past.map((b) => (
@@ -204,13 +207,7 @@ export default function SchedulePage() {
                       {b.available_dates?.date} &middot; {b.booking_time}
                     </p>
                   </div>
-                  <span
-                    className={`px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider ${
-                      b.status === "cancelled"
-                        ? "bg-red-50 text-red-400"
-                        : "bg-gray-100 text-gray-400"
-                    }`}
-                  >
+                  <span className="px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider bg-gray-100 text-gray-400">
                     {b.status}
                   </span>
                 </div>

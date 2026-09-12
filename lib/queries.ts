@@ -411,13 +411,11 @@ export async function getBookingsByDepartment(departmentId: string) {
 }
 
 export async function cancelBooking(bookingId: string) {
-  const { data, error } = await supabase
+  const { error } = await supabase
     .from("bookings")
-    .update({ status: "cancelled", updated_at: new Date().toISOString() })
-    .eq("id", bookingId)
-    .select()
-    .single();
-  return { data: data as Booking | null, error };
+    .delete()
+    .eq("id", bookingId);
+  return { error };
 }
 
 export async function hasActiveBookingInDepartment(
