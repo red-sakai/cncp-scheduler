@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import nodemailer from "nodemailer";
+import { Resend } from "resend";
+
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 interface BookingEmailData {
   name: string;
@@ -21,22 +23,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const smtpHost = process.env.SMTP_HOST;
-    const smtpPort = process.env.SMTP_PORT;
-    const smtpUser = process.env.SMTP_USER;
-    const smtpPass = process.env.SMTP_PASS;
-
-    if (!smtpHost || !smtpUser || !smtpPass) {
+    if (!process.env.RESEND_API_KEY) {
       return NextResponse.json(
-        {
-          error: "SMTP not configured",
-          missing: {
-            SMTP_HOST: !smtpHost,
-            SMTP_PORT: !smtpPort,
-            SMTP_USER: !smtpUser,
-            SMTP_PASS: !smtpPass,
-          },
-        },
+        { error: "RESEND_API_KEY is not set" },
         { status: 500 }
       );
     }
@@ -53,19 +42,8 @@ export async function POST(request: NextRequest) {
     html = html.replace(/\{\{\s*date\s*\}\}/g, date);
     html = html.replace(/\{\{\s*time\s*\}\}/g, time);
 
-    const transporter = nodemailer.createTransport({
-      host: smtpHost,
-      port: Number(smtpPort) || 587,
-      secure: process.env.SMTP_SECURE === "true",
-      auth: {
-        user: smtpUser,
-        pass: smtpPass,
-      },
-    });
-
-    await transporter.verify();
-    await transporter.sendMail({
-      from: process.env.SMTP_FROM ?? `"Cisco NetConnect" <${smtpUser}>`,
+    await resend.emails.send({
+      from: process.env.RESEND_FROM ?? "CNCP Scheduler <onboarding@resend.dev>",
       to: email,
       subject: `Interview Confirmed - ${department} | Cisco NetConnect PUP`,
       html,
