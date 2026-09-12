@@ -197,7 +197,7 @@ export default function AdminDashboard() {
             {departments.map((dept) => (
               <div
                 key={dept.id}
-                className="flex items-center gap-3 p-3.5 rounded-xl bg-[#f0f4fa] border border-cncp-blue/5"
+                className="flex items-center gap-3 p-3.5 rounded-xl bg-[#f3eefa] border border-cncp-blue/5"
               >
                 <div
                   className="w-3 h-3 rounded-full flex-shrink-0"

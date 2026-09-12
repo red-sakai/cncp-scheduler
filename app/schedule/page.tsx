@@ -62,20 +62,20 @@ export default function SchedulePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#e8edf4] flex items-center justify-center">
+      <div className="min-h-screen bg-[#ede5f7] flex items-center justify-center">
         <div className="w-8 h-8 border-2 border-cncp-blue border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#e8edf4]">
+    <div className="min-h-screen bg-[#ede5f7]">
       {/* Nav */}
       <nav className="sticky top-0 z-50 bg-cncp-blue-dark/95 backdrop-blur-md border-b border-cncp-blue/20">
         <div className="max-w-5xl mx-auto px-5 sm:px-8 h-14 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2.5 group">
             <Image
-              src="/cncp-fb-logo.jpg"
+              src="/cncp-partnership-logo.png"
               alt="CNCP Logo"
               width={32}
               height={32}

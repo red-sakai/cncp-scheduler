@@ -10,7 +10,7 @@ export default function Home() {
           <div className="flex items-center justify-between h-16">
             <Link href="/" className="flex items-center gap-2.5 group">
               <Image
-                src="/cncp-fb-logo.jpg"
+                src="/cncp-partnership-logo.png"
                 alt="CNCP Logo"
                 width={36}
                 height={36}
@@ -42,7 +42,7 @@ export default function Home() {
       {/* Hero */}
       <section className="relative pt-16 min-h-screen flex items-center">
         <div className="bg-cncp-hero absolute inset-0" />
-        <div className="absolute inset-0 bg-gradient-to-br from-cncp-blue-dark/90 via-cncp-blue/80 to-cncp-blue-dark/85" />
+        <div className="absolute inset-0 bg-gradient-to-br from-cncp-blue-dark/70 via-cncp-blue/40 to-cncp-blue-dark/50" />
 
         {/* Decorative elements */}
         <div className="absolute top-32 right-12 w-72 h-72 bg-cncp-yellow/8 rounded-full blur-3xl anim-fade-in delay-3" />
@@ -117,7 +117,7 @@ export default function Home() {
             <div>
               <div className="flex items-center gap-2.5 mb-4">
                 <Image
-                  src="/cncp-fb-logo.jpg"
+                  src="/cncp-partnership-logo.png"
                   alt="CNCP Logo"
                   width={32}
                   height={32}

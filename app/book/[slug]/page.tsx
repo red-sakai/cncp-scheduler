@@ -256,7 +256,7 @@ export default function BookingPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#e8edf4] flex items-center justify-center">
+      <div className="min-h-screen bg-[#ede5f7] flex items-center justify-center">
         <div className="w-8 h-8 border-2 border-cncp-blue border-t-transparent rounded-full animate-spin" />
       </div>
     );
@@ -264,7 +264,7 @@ export default function BookingPage() {
 
   if (error || !link) {
     return (
-      <div className="min-h-screen bg-[#e8edf4] flex items-center justify-center p-4">
+      <div className="min-h-screen bg-[#ede5f7] flex items-center justify-center p-4">
         <div className="bg-white rounded-2xl shadow-lg p-10 text-center max-w-sm w-full">
           <svg className="w-12 h-12 text-red-300 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
@@ -286,7 +286,7 @@ export default function BookingPage() {
 
   if (success) {
     return (
-      <div className="min-h-screen bg-[#e8edf4] flex items-center justify-center p-4">
+      <div className="min-h-screen bg-[#ede5f7] flex items-center justify-center p-4">
         <div className="bg-white rounded-2xl shadow-lg p-10 text-center max-w-sm w-full anim-scale-in">
           <div className="w-16 h-16 rounded-full bg-green-50 flex items-center justify-center mx-auto mb-5">
             <svg className="w-8 h-8 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -317,12 +317,12 @@ export default function BookingPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#e8edf4]">
+    <div className="min-h-screen bg-[#ede5f7]">
       {/* Header */}
       <div className="bg-cncp-blue-dark">
         <div className="max-w-4xl mx-auto px-5 py-5 flex items-center gap-3">
           <Image
-            src="/cncp-fb-logo.jpg"
+            src="/cncp-partnership-logo.png"
             alt="CNCP Logo"
             width={36}
             height={36}
@@ -457,7 +457,7 @@ export default function BookingPage() {
                   Your Details
                 </h3>
                 <div className="space-y-3">
-                  <div className="flex items-center gap-3 p-3 rounded-xl bg-[#f0f4fa]">
+                  <div className="flex items-center gap-3 p-3 rounded-xl bg-[#f3eefa]">
                     <div className="w-8 h-8 rounded-full bg-cncp-blue/10 flex items-center justify-center text-cncp-blue text-xs font-bold flex-shrink-0">
                       {user?.fullName?.charAt(0) ?? "U"}
                     </div>

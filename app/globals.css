@@ -3,12 +3,12 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
-  --cncp-blue: #1a3a6b;
-  --cncp-blue-light: #2c5282;
-  --cncp-blue-dark: #0f2340;
-  --cncp-yellow: #f0c040;
-  --cncp-yellow-light: #f5d76e;
-  --cncp-yellow-dark: #d4a017;
+  --cncp-blue: #6c3fa0;
+  --cncp-blue-light: #8b5cf6;
+  --cncp-blue-dark: #1a0a3e;
+  --cncp-yellow: #a5b4fc;
+  --cncp-yellow-light: #c4b5fd;
+  --cncp-yellow-dark: #7c3aed;
 }
 
 @theme inline {
@@ -32,7 +32,7 @@ body {
 
 /* ── Background ── */
 .bg-cncp-hero {
-  background-image: url('/cncp-bg.jpg');
+  background-image: url('/cisco-stellaris-bg.png');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -165,7 +165,7 @@ input:-webkit-autofill:focus {
 
 .cncp-input:focus {
   border-color: var(--cncp-blue);
-  box-shadow: 0 0 0 3px rgba(26, 58, 107, 0.12);
+  box-shadow: 0 0 0 3px rgba(108, 63, 160, 0.12);
   transform: translateY(-1px);
 }
 
@@ -186,18 +186,18 @@ input:-webkit-autofill:focus {
   position: relative;
   overflow: hidden;
   transition: transform 0.15s ease, box-shadow 0.25s ease, background 0.2s ease;
-  box-shadow: 0 4px 14px rgba(240, 192, 64, 0.35);
+  box-shadow: 0 4px 14px rgba(124, 58, 237, 0.35);
 }
 
 .cncp-btn-primary:hover {
   background: var(--cncp-yellow-light);
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(240, 192, 64, 0.45);
+  box-shadow: 0 6px 20px rgba(124, 58, 237, 0.45);
 }
 
 .cncp-btn-primary:active {
   transform: translateY(0) scale(0.98);
-  box-shadow: 0 2px 8px rgba(240, 192, 64, 0.3);
+  box-shadow: 0 2px 8px rgba(124, 58, 237, 0.3);
 }
 
 /* Shimmer sweep on hover */
@@ -261,7 +261,7 @@ input:-webkit-autofill:focus {
 .cncp-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
-  border-color: rgba(240, 192, 64, 0.4);
+  border-color: rgba(165, 180, 252, 0.4);
 }
 
 /* ── Calendar day cell ── */
@@ -278,11 +278,11 @@ input:-webkit-autofill:focus {
   cursor: pointer;
   transition: all 0.2s ease;
   color: var(--cncp-blue-dark);
-  background: #f0f4fa;
+  background: #f3eefa;
 }
 
 .cal-day:hover:not(.cal-disabled):not(.cal-empty) {
-  background: rgba(26, 58, 107, 0.12);
+  background: rgba(108, 63, 160, 0.12);
   transform: scale(1.08);
 }
 
@@ -301,7 +301,7 @@ input:-webkit-autofill:focus {
   color: #fff !important;
   font-weight: 600;
   transform: scale(1.08);
-  box-shadow: 0 4px 12px rgba(26, 58, 107, 0.3);
+  box-shadow: 0 4px 12px rgba(108, 63, 160, 0.3);
 }
 
 .cal-day.cal-selected::after {
@@ -340,13 +340,13 @@ input:-webkit-autofill:focus {
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
-  background: #f0f4fa;
+  background: #f3eefa;
   color: var(--cncp-blue-dark);
 }
 
 .slot-pill:hover:not(.slot-taken) {
   border-color: var(--cncp-blue);
-  background: rgba(26, 58, 107, 0.08);
+  background: rgba(108, 63, 160, 0.08);
   transform: translateY(-1px);
 }
 
@@ -355,7 +355,7 @@ input:-webkit-autofill:focus {
   border-color: var(--cncp-blue);
   color: #fff;
   font-weight: 600;
-  box-shadow: 0 4px 12px rgba(26, 58, 107, 0.3);
+  box-shadow: 0 4px 12px rgba(108, 63, 160, 0.3);
   transform: translateY(-1px);
 }
 

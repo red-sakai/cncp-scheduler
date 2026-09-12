@@ -460,7 +460,7 @@ export default function SchedulesPage() {
                 <span className="text-[11px] font-medium text-cncp-blue/50">Selected</span>
               </div>
               <div className="flex items-center gap-2">
-                <span className="w-2.5 h-2.5 bg-[#f0f4fa] rounded-full border border-cncp-blue/10" />
+                <span className="w-2.5 h-2.5 bg-[#f3eefa] rounded-full border border-cncp-blue/10" />
                 <span className="text-[11px] font-medium text-cncp-blue/50">Click to set time ranges</span>
               </div>
             </div>
@@ -478,7 +478,7 @@ export default function SchedulesPage() {
               </h3>
             </div>
             <div className="space-y-3">
-              <div className="flex items-center justify-between p-3 rounded-xl bg-[#f0f4fa]">
+              <div className="flex items-center justify-between p-3 rounded-xl bg-[#f3eefa]">
                 <span className="text-xs font-medium text-cncp-blue/50">
                   Available Dates
                 </span>
@@ -486,7 +486,7 @@ export default function SchedulesPage() {
                   {selectedDates.size}
                 </span>
               </div>
-              <div className="flex items-center justify-between p-3 rounded-xl bg-[#f0f4fa]">
+              <div className="flex items-center justify-between p-3 rounded-xl bg-[#f3eefa]">
                 <span className="text-xs font-medium text-cncp-blue/50">
                   Month
                 </span>
@@ -555,7 +555,7 @@ export default function SchedulesPage() {
                   {modalRanges.map((range, i) => (
                     <div
                       key={i}
-                      className="flex items-center gap-2 p-3 rounded-xl bg-[#f0f4fa] border border-cncp-blue/5"
+                      className="flex items-center gap-2 p-3 rounded-xl bg-[#f3eefa] border border-cncp-blue/5"
                     >
                       <TimeSelect
                         value={range.start}

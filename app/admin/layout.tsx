@@ -76,14 +76,14 @@ export default function AdminLayout({
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#e8edf4] flex items-center justify-center">
+      <div className="min-h-screen bg-[#ede5f7] flex items-center justify-center">
         <div className="w-8 h-8 border-2 border-cncp-blue border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#e8edf4] flex">
+    <div className="min-h-screen bg-[#ede5f7] flex">
       {/* Mobile overlay */}
       {sidebarOpen && (
         <div
@@ -101,7 +101,7 @@ export default function AdminLayout({
         {/* Brand */}
         <div className="px-5 h-16 flex items-center gap-2.5 border-b border-white/5">
           <Image
-            src="/cncp-fb-logo.jpg"
+            src="/cncp-partnership-logo.png"
             alt="CNCP Logo"
             width={32}
             height={32}

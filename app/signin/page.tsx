@@ -54,7 +54,7 @@ function SignInForm() {
       {/* Left panel — hero image */}
       <div className="hidden lg:flex flex-1 relative overflow-hidden">
         <div className="bg-cncp-hero absolute inset-0 anim-scale-in" />
-        <div className="absolute inset-0 bg-gradient-to-t from-cncp-blue-dark/95 via-cncp-blue/70 to-cncp-blue-dark/60" />
+        <div className="absolute inset-0 bg-gradient-to-t from-cncp-blue-dark/80 via-cncp-blue/40 to-cncp-blue-dark/50" />
 
         {/* Floating accent shapes */}
         <div className="absolute top-20 left-10 w-40 h-40 border border-cncp-yellow/15 rounded-2xl rotate-12 anim-fade-in delay-3" />
@@ -63,7 +63,7 @@ function SignInForm() {
         <div className="relative z-10 flex flex-col justify-center px-14 xl:px-20 w-full">
           <div className="max-w-sm anim-slide-left delay-2">
             <Image
-              src="/cncp-fb-logo.jpg"
+              src="/cncp-partnership-logo.png"
               alt="CNCP Logo"
               width={48}
               height={48}

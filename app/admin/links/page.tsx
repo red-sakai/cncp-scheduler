@@ -291,7 +291,7 @@ export default function LinksPage() {
                   {link.date_to}
                 </p>
                 <div className="flex items-center gap-2">
-                  <code className="text-[11px] font-mono text-cncp-blue/50 bg-[#f0f4fa] px-2 py-1 rounded-md">
+                  <code className="text-[11px] font-mono text-cncp-blue/50 bg-[#f3eefa] px-2 py-1 rounded-md">
                     /book/{link.slug}
                   </code>
                   <button
