@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import nodemailer from "nodemailer";
-import fs from "fs";
-import path from "path";
 
 function getTransporter() {
   return nodemailer.createTransport({
@@ -35,12 +33,12 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const templatePath = path.join(
-      process.cwd(),
-      "public",
-      "cisco_new_template.html"
-    );
-    let html = fs.readFileSync(templatePath, "utf-8");
+    const origin = request.nextUrl.origin;
+    const res = await fetch(`${origin}/cisco_new_template.html`);
+    if (!res.ok) {
+      throw new Error(`Failed to load email template: ${res.status}`);
+    }
+    let html = await res.text();
 
     html = html.replace(/\{\{\s*name\s*\}\}/g, name);
     html = html.replace(/\{\{\s*department\s*\}\}/g, department);
